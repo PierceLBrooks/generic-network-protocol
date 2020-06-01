@@ -8,14 +8,14 @@ int GetLastError() {
 
 #else
 
-int strncasecmp(const char *s1, const char *s2, size_t size) {
+/*int strncasecmp(const char *s1, const char *s2, size_t size) {
 	return _strnicmp(s1, s2, size);
-}
+}*/
 
 
-int strcasecmp(const char *s1, const char *s2) {
+/*int strcasecmp(const char *s1, const char *s2) {
 	return _stricmp(s1, s2);
-}
+}*/
 
 int close(int socket) {
 	return closesocket(socket);

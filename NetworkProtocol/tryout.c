@@ -23,6 +23,9 @@ void on_connection_dropped(tls_uv_connection_state_t* connection) {
 
 int on_connection_recv(tls_uv_connection_state_t* connection, cmd_t* cmd) {
 	int rc;
+  for (int i = 0; i < cmd->argc; ++i) {
+    printf("%i: \"%s\"\n", i, cmd->argv[i]);
+  }
 	if (strcasecmp("GET", cmd->argv[0]) == 0 && cmd->argc > 1) {
 		rc = connection_reply_format(cmd, "%s", cmd->argv[1]);
 	}
@@ -57,9 +60,10 @@ int main(int argc, char **argv)
 		&handler,
 		{  // allowed certs
 			"1776821DB1002B0E2A9B4EE3D5EE14133D367009" , 
-			"AE535D83572189D3EDFD1568DC76275BE33B07F5" 
+			"AE535D83572189D3EDFD1568DC76275BE33B07F5" ,
+      "9E6C51141D90064DB7D474AA9EE0AF4704EE25A0"
 		},
-		2 // number of allowed certs
+		3 // number of allowed certs
 	};
 	srv_state = server_state_create(&options);
 

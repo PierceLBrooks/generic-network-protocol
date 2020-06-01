@@ -19,7 +19,7 @@ int connection_reply(struct cmd* c, void* buf, size_t len) {
 		return 0;
 	}
 
-	rc = asprintf(&msg, "OK\r\nSequence: %s\r\nSize: %i\r\n\r\n", c->sequence, len);
+	rc = asprintf(&msg, "OK,,Sequence: %s,,Size: %i,,,,", c->sequence, len);
 	if (rc == -1) {
 		push_error(EINVAL, "Failed to format message headers to write to connection");
 		return 0;
@@ -76,9 +76,9 @@ static cmd_t* parse_command(tls_uv_connection_state_t* c, char* buffer, size_t l
 	}
 	cmd->connection = c;
 	cmd->cmd_buffer = copy;
-	line = strtok_s(copy, "\r\n", &line_ctx);
+	line = strtok_s(copy, ",,", &line_ctx);
 	if (line == NULL) {
-		push_error(EINVAL, "Unable to find \r\n in the provided buffer");
+		push_error(EINVAL, "Unable to find \",,\" in the provided buffer");
 		goto error_cleanup;
 	}
 	arg = strtok_s(line, " ", &ws_ctx);
@@ -97,7 +97,7 @@ static cmd_t* parse_command(tls_uv_connection_state_t* c, char* buffer, size_t l
 
 	while (1)
 	{
-		line = strtok_s(NULL, "\r\n", &line_ctx);
+		line = strtok_s(NULL, ",,", &line_ctx);
 		if (line == NULL)
 			break;
 		arg = strtok_s(line, ":", &ws_ctx);
@@ -154,9 +154,9 @@ int read_message(tls_uv_connection_state_t* c, void* buffer, int nread) {
 		// first, need to check if we already
 		// read the value from the network
 		if (c->used_buffer > 0) {
-			char* final = strnstr(c->buffer + c->to_scan, "\r\n\r\n", c->used_buffer - c->to_scan);
+			char* final = strnstr(c->buffer + c->to_scan, ",,,,", c->used_buffer - c->to_scan);
 			if (final != NULL) {
-				cmd_t* cmd = parse_command(c, c->buffer, final - c->buffer + 2/*include one \r\n*/);
+				cmd_t* cmd = parse_command(c, c->buffer, final - c->buffer + 2/*include one ",,"*/);
 
 				int rc = c->server->options.handler->connection_recv(c, cmd);
 
@@ -167,7 +167,7 @@ int read_message(tls_uv_connection_state_t* c, void* buffer, int nread) {
 					return 0;
 
 				// now move the rest of the buffer that doesn't belong to this command 
-				// adding 4 for the length of the msg separator (\r\n\r\n)
+				// adding 4 for the length of the msg separator (",,,,")
 				c->used_buffer -= (final + 4) - c->buffer;
 				memmove(c->buffer, final + 4, c->used_buffer);
 				c->to_scan = 0;
@@ -177,7 +177,7 @@ int read_message(tls_uv_connection_state_t* c, void* buffer, int nread) {
 		}
 		if (MSG_SIZE - c->used_buffer == 0) {
 			push_error(EINVAL, "Message size is too large, after 8KB, "
-				"couldn't find \r\n separator, aborting connection.");
+				"couldn't find \",,\" separator, aborting connection.");
 			return 0;
 		}
 	}

@@ -86,9 +86,17 @@
 				<label>NetworkProtocol</label>
 				<definitions></definitions>
 				<links>
-					<link>uv</link>
+					<link>uv_a</link>
 					<link>ssl</link>
 					<link>crypto</link>
+					<if_check id="BUILDSTER_OS" check="Windows">
+						<link>iphlpapi</link>
+						<link>psapi</link>
+						<link>userenv</link>
+						<link>gdi32</link>
+						<link>crypt32</link>
+						<link>ws2_32</link>
+					</if_check>
 				</links>
 				<imports>
 					<import>libuv</import>

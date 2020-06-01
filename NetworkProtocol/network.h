@@ -48,8 +48,8 @@ typedef struct tls_uv_connection_state {
 
 // char(*__kaboom)[MSG_SIZE] = 1;
 
-static_assert(offsetof(tls_uv_connection_state_t, user_data) % 64 == 0, "tls_uv_connection_state_t.user should be 64 bytes aligned");
-static_assert(sizeof(tls_uv_connection_state_t) == 8192, "tls_uv_connection_state_t should be 8KB");
+//static_assert(offsetof(tls_uv_connection_state_t, user_data) % 64 == 0, "tls_uv_connection_state_t.user should be 64 bytes aligned");
+//static_assert(sizeof(tls_uv_connection_state_t) == 8192, "tls_uv_connection_state_t should be 8KB");
 
 // commands
 

@@ -24,9 +24,9 @@ int GetLastError();
 
 #define get_server_method TLSv1_2_server_method
 
-int strcasecmp(const char *s1, const char *s2);
+//int strcasecmp(const char *s1, const char *s2);
 
-int strncasecmp(const char *s1, const char *s2, size_t size);
+//int strncasecmp(const char *s1, const char *s2, size_t size);
 
 int close(int socket);
 
