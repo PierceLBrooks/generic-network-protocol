@@ -219,7 +219,6 @@ void abort_connection_on_error(tls_uv_connection_state_t* state) {
 
 void complete_write(uv_write_t* r, int status) {
 	tls_uv_connection_state_t* state = r->data;
-	free(r->write_buffer.base);
 	free(r);
 
 	if (status < 0) {
@@ -474,7 +473,7 @@ void on_new_connection(uv_stream_t *server, int status) {
 		push_error(ENOMEM, "create_connection callback returned NULL");
 		goto error_handler;
 	}
-	memset(state, 0, sizeof(struct tls_uv_connection_state_private_members));
+	memset(state, 0, offsetof(tls_uv_connection_state_t, user_data));
 	state->ssl = SSL_new(server_state->ctx);
 	if (state->ssl == NULL) {
 		push_error(ENOMEM, "Unable to allocate SSL for connection");
